@@ -61,7 +61,7 @@ class MatplotFigure(Widget):
         x, y = mouse_pos
         if self.collide_point(x, y):
             real_x, real_y = x - self.pos[0], y - self.pos[1]
-            self.figcanvas.motion_notify_event(x, real_y, guiEvent=None)
+            self.figcanvas.motion_notify_event(real_x, real_y, guiEvent=None)
 
     def on_touch_down(self, event):
         x, y = event.x, event.y
@@ -69,14 +69,14 @@ class MatplotFigure(Widget):
         if self.collide_point(x, y):
             self._pressed = True
             real_x, real_y = x - self.pos[0], y - self.pos[1]
-            self.figcanvas.button_press_event(x, real_y, 1, guiEvent=event)
+            self.figcanvas.button_press_event(real_x, real_y, 1, guiEvent=event)
 
     def on_touch_move(self, event):
         """ Mouse move while pressed """
         x, y = event.x, event.y
         if self.collide_point(x, y):
             real_x, real_y = x - self.pos[0], y - self.pos[1]
-            self.figcanvas.motion_notify_event(x, real_y, guiEvent=event)
+            self.figcanvas.motion_notify_event(real_x, real_y, guiEvent=event)
 
     def on_touch_up(self, event):
         x, y = event.x, event.y
@@ -85,7 +85,7 @@ class MatplotFigure(Widget):
         if self.collide_point(x, y):
             pos_x, pos_y = self.pos
             real_x, real_y = x - pos_x, y - pos_y
-            self.figcanvas.button_release_event(x, real_y, 1, guiEvent=event)
+            self.figcanvas.button_release_event(real_x, real_y, 1, guiEvent=event)
             self._pressed = False
 
     def new_timer(self, *args, **kwargs):
@@ -114,11 +114,13 @@ class MatplotFigure(Widget):
 
     def draw_box(self, event, x0, y0, x1, y1):
         pos_x, pos_y = self.pos
+        real_x0 = x0 + pos_x
+        real_x1 = x1 + pos_x
         # Kivy coords
         y0 = pos_y + y0
         y1 = pos_y + y1
-        self._box_pos = x0, y0
-        self._box_size = x1 - x0, y1 - y0
+        self._box_pos = real_x0, y0
+        self._box_size = real_x1 - real_x0, y1 - y0
 
 
 class _FigureCanvas(FigureCanvasAgg):
